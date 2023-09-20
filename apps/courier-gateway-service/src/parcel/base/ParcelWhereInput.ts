@@ -11,13 +11,61 @@ https://docs.amplication.com/how-to/custom-code
   */
 import { InputType, Field } from "@nestjs/graphql";
 import { ApiProperty } from "@nestjs/swagger";
-import { FloatNullableFilter } from "../../util/FloatNullableFilter";
+import { DateTimeFilter } from "../../util/DateTimeFilter";
 import { Type } from "class-transformer";
-import { IsOptional, ValidateNested } from "class-validator";
+import { IsOptional, IsEnum, ValidateNested } from "class-validator";
+import { StringFilter } from "../../util/StringFilter";
+import { JsonFilter } from "../../util/JsonFilter";
+import { EnumParcelParcelType } from "./EnumParcelParcelType";
+import { FloatNullableFilter } from "../../util/FloatNullableFilter";
 import { QuoteListRelationFilter } from "../../quote/base/QuoteListRelationFilter";
 
 @InputType()
 class ParcelWhereInput {
+  @ApiProperty({
+    required: false,
+    type: DateTimeFilter,
+  })
+  @Type(() => DateTimeFilter)
+  @IsOptional()
+  @Field(() => DateTimeFilter, {
+    nullable: true,
+  })
+  createdAt?: DateTimeFilter;
+
+  @ApiProperty({
+    required: false,
+    type: StringFilter,
+  })
+  @Type(() => StringFilter)
+  @IsOptional()
+  @Field(() => StringFilter, {
+    nullable: true,
+  })
+  id?: StringFilter;
+
+  @ApiProperty({
+    required: false,
+    type: JsonFilter,
+  })
+  @Type(() => JsonFilter)
+  @IsOptional()
+  @Field(() => JsonFilter, {
+    nullable: true,
+  })
+  maxDimension?: JsonFilter;
+
+  @ApiProperty({
+    required: false,
+    enum: EnumParcelParcelType,
+  })
+  @IsEnum(EnumParcelParcelType)
+  @IsOptional()
+  @Field(() => EnumParcelParcelType, {
+    nullable: true,
+  })
+  parcelType?: "Small" | "Large" | "Medium";
+
   @ApiProperty({
     required: false,
     type: FloatNullableFilter,
@@ -40,6 +88,28 @@ class ParcelWhereInput {
     nullable: true,
   })
   quotes?: QuoteListRelationFilter;
+
+  @ApiProperty({
+    required: false,
+    type: DateTimeFilter,
+  })
+  @Type(() => DateTimeFilter)
+  @IsOptional()
+  @Field(() => DateTimeFilter, {
+    nullable: true,
+  })
+  updatedAt?: DateTimeFilter;
+
+  @ApiProperty({
+    required: false,
+    type: FloatNullableFilter,
+  })
+  @Type(() => FloatNullableFilter)
+  @IsOptional()
+  @Field(() => FloatNullableFilter, {
+    nullable: true,
+  })
+  weight?: FloatNullableFilter;
 }
 
 export { ParcelWhereInput as ParcelWhereInput };

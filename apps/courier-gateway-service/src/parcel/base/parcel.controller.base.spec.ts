@@ -172,7 +172,7 @@ describe("Parcel", () => {
   });
 
   test("POST /parcels existing resource", async () => {
-    let agent = request(app.getHttpServer());
+    const agent = request(app.getHttpServer());
     await agent
       .post("/parcels")
       .send(CREATE_INPUT)

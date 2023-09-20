@@ -172,7 +172,7 @@ describe("Quote", () => {
   });
 
   test("POST /quotes existing resource", async () => {
-    let agent = request(app.getHttpServer());
+    const agent = request(app.getHttpServer());
     await agent
       .post("/quotes")
       .send(CREATE_INPUT)
