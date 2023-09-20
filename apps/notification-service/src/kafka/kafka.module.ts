@@ -1,13 +1,13 @@
-import { ConsoleLogger, Module } from "@nestjs/common";
-import { ClientProxyFactory, ClientsModule } from "@nestjs/microservices";
+import { Global, Module } from "@nestjs/common";
+import { ClientProxyFactory } from "@nestjs/microservices";
 import { generateKafkaClientOptions } from "./generateKafkaClientOptions";
 import { KafkaProducerService } from "./kafka.producer.service";
-import { ConfigService } from "@nestjs/config";
-import { NotificationModule } from "../notification/notification.module";
 import { KafkaController } from "./kafka.controller";
+import { ConfigService } from "@nestjs/config";
 
+@Global()
 @Module({
-  imports: [NotificationModule],
+  imports: [],
   providers: [
     {
       provide: "KAFKA_CLIENT",

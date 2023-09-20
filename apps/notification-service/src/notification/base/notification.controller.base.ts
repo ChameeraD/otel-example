@@ -16,7 +16,11 @@ import * as errors from "../../errors";
 import { Request } from "express";
 import { plainToClass } from "class-transformer";
 import { ApiNestedQuery } from "../../decorators/api-nested-query.decorator";
+import * as nestAccessControl from "nest-access-control";
+import * as defaultAuthGuard from "../../auth/defaultAuth.guard";
 import { NotificationService } from "../notification.service";
+import { AclValidateRequestInterceptor } from "../../interceptors/aclValidateRequest.interceptor";
+import { AclFilterResponseInterceptor } from "../../interceptors/aclFilterResponse.interceptor";
 import { NotificationCreateInput } from "./NotificationCreateInput";
 import { NotificationWhereInput } from "./NotificationWhereInput";
 import { NotificationWhereUniqueInput } from "./NotificationWhereUniqueInput";
@@ -24,10 +28,24 @@ import { NotificationFindManyArgs } from "./NotificationFindManyArgs";
 import { NotificationUpdateInput } from "./NotificationUpdateInput";
 import { Notification } from "./Notification";
 
+@swagger.ApiBearerAuth()
+@common.UseGuards(defaultAuthGuard.DefaultAuthGuard, nestAccessControl.ACGuard)
 export class NotificationControllerBase {
-  constructor(protected readonly service: NotificationService) {}
+  constructor(
+    protected readonly service: NotificationService,
+    protected readonly rolesBuilder: nestAccessControl.RolesBuilder
+  ) {}
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Post()
   @swagger.ApiCreatedResponse({ type: Notification })
+  @nestAccessControl.UseRoles({
+    resource: "Notification",
+    action: "create",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async create(
     @common.Body() data: NotificationCreateInput
   ): Promise<Notification> {
@@ -44,9 +62,18 @@ export class NotificationControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get()
   @swagger.ApiOkResponse({ type: [Notification] })
   @ApiNestedQuery(NotificationFindManyArgs)
+  @nestAccessControl.UseRoles({
+    resource: "Notification",
+    action: "read",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async findMany(@common.Req() request: Request): Promise<Notification[]> {
     const args = plainToClass(NotificationFindManyArgs, request.query);
     return this.service.findMany({
@@ -62,9 +89,18 @@ export class NotificationControllerBase {
     });
   }
 
+  @common.UseInterceptors(AclFilterResponseInterceptor)
   @common.Get("/:id")
   @swagger.ApiOkResponse({ type: Notification })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Notification",
+    action: "read",
+    possession: "own",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async findOne(
     @common.Param() params: NotificationWhereUniqueInput
   ): Promise<Notification | null> {
@@ -87,9 +123,18 @@ export class NotificationControllerBase {
     return result;
   }
 
+  @common.UseInterceptors(AclValidateRequestInterceptor)
   @common.Patch("/:id")
   @swagger.ApiOkResponse({ type: Notification })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Notification",
+    action: "update",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async update(
     @common.Param() params: NotificationWhereUniqueInput,
     @common.Body() data: NotificationUpdateInput
@@ -120,6 +165,14 @@ export class NotificationControllerBase {
   @common.Delete("/:id")
   @swagger.ApiOkResponse({ type: Notification })
   @swagger.ApiNotFoundResponse({ type: errors.NotFoundException })
+  @nestAccessControl.UseRoles({
+    resource: "Notification",
+    action: "delete",
+    possession: "any",
+  })
+  @swagger.ApiForbiddenResponse({
+    type: errors.ForbiddenException,
+  })
   async delete(
     @common.Param() params: NotificationWhereUniqueInput
   ): Promise<Notification | null> {
