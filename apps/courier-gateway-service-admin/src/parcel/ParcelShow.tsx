@@ -28,7 +28,7 @@ export const ParcelShow = (props: ShowProps): React.ReactElement => {
           <Datagrid rowClick="show">
             <DateField source="createdAt" label="Created At" />
             <TextField label="Description" source="description" />
-            <TextField label="ID" source="id" />
+            <TextField label="Id" source="id" />
             <ReferenceField
               label="Parcel"
               source="parcel.id"
